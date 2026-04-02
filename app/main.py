@@ -2,6 +2,7 @@ import os
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import RedirectResponse
 from fastapi.responses import JSONResponse
 
 from app.database import Base, engine
@@ -50,6 +51,11 @@ async def http_exception_handler(_: Request, exc: HTTPException) -> JSONResponse
 @app.get("/health", tags=["System"])
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/", include_in_schema=False)
+def root_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/docs", status_code=307)
 
 
 app.include_router(auth.router)
