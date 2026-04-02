@@ -1,6 +1,6 @@
 # Finance Data Processing and Access Control Backend
 
-A complete backend implementation for the assignment using **FastAPI + SQLite + SQLAlchemy**.
+A complete backend implementation for the assignment using **FastAPI + SQLAlchemy** with SQLite (default local) and PostgreSQL-ready deployment support.
 
 ## Why this design
 
@@ -16,7 +16,8 @@ This implementation focuses on:
 - Python 3.11+
 - FastAPI
 - SQLAlchemy ORM
-- SQLite (file-based persistence)
+- SQLite for local development
+- PostgreSQL (Neon) support for deployment
 - OAuth2 password flow + bearer token (JWT)
 - Pytest for API tests
 
@@ -68,6 +69,15 @@ Role rules:
 
 - SQLite database (`finance.db`) created automatically on startup
 - SQLAlchemy models for `User` and `FinancialRecord`
+- Deployment-ready PostgreSQL support through `DATABASE_URL`
+
+## Environment Variables
+
+- `DATABASE_URL` (optional for local, required for deployment)
+	- Local default: `sqlite:///./finance.db`
+	- Neon/PostgreSQL example:
+		`postgresql://<user>:<password>@<host>/<db>?sslmode=require&channel_binding=require`
+- `TESTING` (used by tests): `1`
 
 ## Project Structure
 
@@ -177,6 +187,20 @@ Use returned bearer token for protected endpoints.
 ```bash
 pytest
 ```
+
+## Deploy on Vercel (Neon PostgreSQL)
+
+1. Push latest code (includes `vercel.json` and `api/index.py`).
+2. In Vercel: import the GitHub repo and deploy.
+3. In Vercel project settings, add environment variable:
+	- `DATABASE_URL` = your Neon connection string
+4. Redeploy the project.
+5. Open API docs at:
+	- `https://<your-vercel-domain>/docs`
+
+Notes:
+- Do not hardcode database credentials in source code.
+- App tables are created automatically on startup.
 
 Tests cover:
 - Bootstrap and login flow
